@@ -12,7 +12,7 @@ GLuint compileShader(GLenum shaderType , const char *shaderCode){
      * 1.是代表一段代码。
      * 2.shaderCode 代码的地址
      */
-    glShaderSource(shader  , 1 , &shaderCode , nullptr);
+    glShaderSource(shader  , 1 , &shaderCode , NULL);
     /**
      * 编译
      */

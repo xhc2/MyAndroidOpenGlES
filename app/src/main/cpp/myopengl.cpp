@@ -13,6 +13,7 @@ MyOpenGl::MyOpenGl(const char* vs , const char* fs){
     this->fs = (char *)malloc(fsLen);
     strcpy(this->vs ,  vs);
     strcpy(this->fs ,  fs);
+    initTrangle();
 }
 
 void MyOpenGl::createSurface(){
@@ -25,6 +26,7 @@ void MyOpenGl::surfaceChange(int width , int height){
 
 void MyOpenGl::drawFrame(){
     glClear(GL_COLOR_BUFFER_BIT);
+    drawTrangle();
 }
 
 void MyOpenGl::initTrangle(){
@@ -79,8 +81,12 @@ void MyOpenGl::initTrangle(){
     viewMatrixL = glGetUniformLocation(programTrangle , "ViewMatrix");
     projectionMatrixL = glGetUniformLocation(programTrangle , "ProjectionMatrix");
 
+}
+
+void MyOpenGl::drawTrangle(){
 
 }
+
 
 MyOpenGl::~MyOpenGl(){
 

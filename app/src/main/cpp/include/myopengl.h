@@ -19,6 +19,7 @@ public :
     void createSurface();
     void surfaceChange(int width , int height);
     void drawFrame();
+    void drawTrangle();
     void initTrangle();
 
 };

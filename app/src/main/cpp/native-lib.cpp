@@ -10,7 +10,6 @@ MyOpenGl *mygl;
 extern "C"
 JNIEXPORT void JNICALL
 Java_opengles_xhc_android_myandroidopengles_OpenGlNative_surfaceCreate(JNIEnv *env, jclass type) {
-    LOGE("%d ", mygl);
     mygl->createSurface();
 }
 

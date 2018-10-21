@@ -13,8 +13,12 @@ public class MyGlSurfaceView extends GLSurfaceView implements SurfaceHolder.Call
 
     public MyGlSurfaceView(Context context, AttributeSet attrs) {
         super(context, attrs);
-        OpenGlNative.initOpenGl();
+        String vs = TextResourceReader.readTextFileFromResource(context , R.raw.triangle_vs);
+        String fs = TextResourceReader.readTextFileFromResource(context , R.raw.triangle_fs);
+        OpenGlNative.initOpenGl(vs , fs);
     }
+
+
 
     @Override
     public void surfaceCreated(SurfaceHolder holder) {
