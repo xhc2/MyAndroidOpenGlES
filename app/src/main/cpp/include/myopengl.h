@@ -13,6 +13,9 @@ class MyOpenGl{
 private :
     char* vs ;
     char* fs ;
+    GLuint  programTrangle ;
+    GLint positionL , modelMatrixL , viewMatrixL , projectionMatrixL ;
+    void checkGlError(const char *op);
 public :
     MyOpenGl(const char* vs , const char* fs);
     ~MyOpenGl();

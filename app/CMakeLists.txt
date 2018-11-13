@@ -9,6 +9,7 @@ add_library( native-lib
              src/main/cpp/native-lib.cpp
              src/main/cpp/myopengl.cpp
                src/main/cpp/MyOpenGlUtils.cpp
+               src/main/cpp/Matrix.cpp
              )
 
 
