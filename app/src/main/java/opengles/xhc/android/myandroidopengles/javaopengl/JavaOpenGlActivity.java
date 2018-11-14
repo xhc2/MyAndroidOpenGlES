@@ -8,6 +8,8 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import opengles.xhc.android.myandroidopengles.R;
 import android.opengl.GLSurfaceView;
+import android.view.Window;
+import android.view.WindowManager;
 
 public class JavaOpenGlActivity extends AppCompatActivity {
 
@@ -16,13 +18,16 @@ public class JavaOpenGlActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        requestWindowFeature(Window.FEATURE_NO_TITLE);
+        getWindow().setFlags(WindowManager.LayoutParams. FLAG_FULLSCREEN ,
+                WindowManager.LayoutParams. FLAG_FULLSCREEN);
         glSurfaceView = new GLSurfaceView(this);
         setContentView(/*R.layout.activity_java_open_gl*/glSurfaceView);
         ActivityManager am = (ActivityManager)getSystemService(Context.ACTIVITY_SERVICE);
         ConfigurationInfo cgi = am.getDeviceConfigurationInfo();
         if(cgi.reqGlEsVersion > 0x20000){
             glSurfaceView.setEGLContextClientVersion(2);
-            glSurfaceView.setRenderer(new TextureRender(this));
+            glSurfaceView.setRenderer(new YuvPlayerRender(this));
 
         }
 

@@ -16,7 +16,7 @@ import static android.opengl.GLES20.glDeleteTextures;
 import static android.opengl.GLES20.glGenTextures;
 import static android.opengl.GLES20.glGenerateMipmap;
 import static android.opengl.GLES20.glTexImage2D;
-import static android.opengl.GLES20.glTexParameteri;
+import static android.opengl.GLES20.*;
 import static android.opengl.GLUtils.texImage2D;
 public class TextureHelper {
 
@@ -53,4 +53,65 @@ public class TextureHelper {
         glBindTexture(GL_TEXTURE_2D , 0);
         return textureObjectIds[0];
     }
+
+    public static int[] initYuvTexture(int outWidth , int outHeight){
+
+        int[] textureObjectIds = new int[3];
+        glGenTextures(3 ,textureObjectIds , 0); //3是创建三个纹理对象的意思
+        if(textureObjectIds[0] == 0 || textureObjectIds[1] == 0 || textureObjectIds[2] == 0){
+            Log.e("xhc" , "cant open opengl texture object ！");
+            return null;
+        }
+
+        glBindTexture(GL_TEXTURE_2D , textureObjectIds[0]);
+        glTexParameteri(GL_TEXTURE_2D , GL_TEXTURE_MIN_FILTER , GL_LINEAR);
+        glTexParameteri(GL_TEXTURE_2D , GL_TEXTURE_MAG_FILTER , GL_LINEAR);
+        glTexImage2D(
+                GL_TEXTURE_2D,  //target 指定目标纹理，这个值必须是GL_TEXTURE_2D。
+                0,           //level 执行细节级别。0是最基本的图像级别，n表示第N级贴图细化级别。
+                GL_LUMINANCE,//指定纹理中的颜色组件。可选的值有GL_ALPHA,GL_RGB,GL_RGBA,GL_LUMINANCE, GL_LUMINANCE_ALPHA 等几种。
+                outWidth , //指定纹理图像的宽度，必须是2的n次方。纹理图片至少要支持64个材质元素的宽度
+                outHeight, // 指定纹理图像的高度，必须是2的m次方。纹理图片至少要支持64个材质元素的高度
+                0,             // 指定边框的宽度。必须为0
+                GL_LUMINANCE,//像素数据的颜色格式, 不需要和internalformatt取值必须相同。可选的值参考internalformat。
+                GL_UNSIGNED_BYTE, //ype 指定像素数据的数据类型。可以使用的值有GL_UNSIGNED_BYTE,GL_UNSIGNED_SHORT_5_6_5,GL_UNSIGNED_SHORT_4_4_4_4,GL_UNSIGNED_SHORT_5_5_5_1
+                null                    //pixels 指定内存中指向图像数据的指针
+        );
+
+        glBindTexture(GL_TEXTURE_2D, textureObjectIds[1]);
+        //缩小的过滤器
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+        //设置纹理的格式和大小
+        glTexImage2D(GL_TEXTURE_2D,
+                0,
+                GL_LUMINANCE,
+                outWidth / 2,
+                outHeight / 2,
+                0,
+                GL_LUMINANCE,
+                GL_UNSIGNED_BYTE,
+                null
+        );
+
+        //设置纹理属性
+        glBindTexture(GL_TEXTURE_2D, textureObjectIds[2]);
+        //缩小的过滤器
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+        //设置纹理的格式和大小
+        glTexImage2D(GL_TEXTURE_2D,
+                0,
+                GL_LUMINANCE,
+                outWidth / 2, outHeight / 2,
+                0,
+                GL_LUMINANCE,
+                GL_UNSIGNED_BYTE,
+                null
+        );
+
+        return textureObjectIds;
+    }
+
+
 }

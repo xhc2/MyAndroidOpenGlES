@@ -34,16 +34,16 @@ public class TextureRender implements GLSurfaceView.Renderer {
     private static final int TEXTURE_COORDINATES_COMPONNET_COUNT = 2;
     private static final int STRIDE = (POSITION_COMPONENT_COUNT + TEXTURE_COORDINATES_COMPONNET_COUNT) * BYTES_PER_FLOAT;
 
-    public TextureRender(Context cotnext) {
-        this.context = cotnext;
+    public TextureRender(Context context) {
+        this.context = context;
         float[] tableVerticesTexture = {
                 //x, y , s , t
                 0f, 0f, 0.5f, 0.5f,
-                -0.5f, -0.8f, 0f, 0.9f,
-                0.5f, -0.8f, 1f, 0.9f,
-                0.5f, 0.8f, 1f, 0.1f,
-                -0.5f, 0.8f, 0f, 0.1f,
-                -0.5f, -0.8f, 0f, 0.9f,
+                -1f, -1f, 0f, 1f,
+                1f, -1f, 1f, 1f,
+                1f, 1f, 1f, 0f,
+                -1f, 1f, 0f, 0f,
+                -1f, -1f, 0f, 1f,
         };
         vertexData = ByteBuffer.allocateDirect(tableVerticesTexture.length * BYTES_PER_FLOAT)
                 .order(ByteOrder.nativeOrder())
@@ -69,8 +69,16 @@ public class TextureRender implements GLSurfaceView.Renderer {
         vertexData.position(0);
         texttureId = TextureHelper.loadTexture(context, R.mipmap.air_hockey_surface);
         Log.e("xhc", " textture " + texttureId);
+        setVertexAttribPointer(0,
+                aPositionL,
+                POSITION_COMPONENT_COUNT,
+                STRIDE);
 
-//        glVertexAttribPointer(aPositionL , POSITION_COMPONENT_COUNT , GL_FLOAT , false , 0 , vertexData);
+        setVertexAttribPointer(
+                POSITION_COMPONENT_COUNT,
+                aTextureCoordinatesL,
+                TEXTURE_COORDINATES_COMPONNET_COUNT,
+                STRIDE);
     }
 
     @Override
@@ -95,15 +103,8 @@ public class TextureRender implements GLSurfaceView.Renderer {
         glBindTexture(GL_TEXTURE_2D, texttureId);
         glUniform1i(uTextureUnitL, 0);
 
-        setVertexAttribPointer(0,
-                aPositionL,
-                POSITION_COMPONENT_COUNT,
-                STRIDE);
-        setVertexAttribPointer(
-                POSITION_COMPONENT_COUNT,
-                aTextureCoordinatesL,
-                TEXTURE_COORDINATES_COMPONNET_COUNT,
-                STRIDE);
+
+
         glDrawArrays(GL_TRIANGLE_FAN, 0, 6);
     }
 }
