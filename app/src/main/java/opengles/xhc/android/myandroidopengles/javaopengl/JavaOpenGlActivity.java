@@ -22,7 +22,7 @@ public class JavaOpenGlActivity extends AppCompatActivity {
         ConfigurationInfo cgi = am.getDeviceConfigurationInfo();
         if(cgi.reqGlEsVersion > 0x20000){
             glSurfaceView.setEGLContextClientVersion(2);
-            glSurfaceView.setRenderer(new AirHockeyRender(this));
+            glSurfaceView.setRenderer(new TextureRender(this));
 
         }
 

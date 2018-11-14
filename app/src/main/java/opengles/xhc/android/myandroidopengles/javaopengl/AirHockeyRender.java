@@ -28,6 +28,8 @@ public class AirHockeyRender implements GLSurfaceView.Renderer {
     private static final String A_POSITION = "a_Position";
     private int aPositionLocation ;
     private Context context;
+
+
     public AirHockeyRender(Context context) {
         this.context = context;
         float[] tableVertices = {
@@ -50,6 +52,7 @@ public class AirHockeyRender implements GLSurfaceView.Renderer {
                 // line 1
                 -0.5f , 0f ,
                 0.5f , 0f ,
+
                 // mallets
                 0f , -0.25f ,
                 0f , 0.25f
@@ -93,8 +96,8 @@ public class AirHockeyRender implements GLSurfaceView.Renderer {
     }
 
     @Override
-    public void onSurfaceChanged(GL10 gl10, int i, int i1) {
-
+    public void onSurfaceChanged(GL10 gl10, int width, int height) {
+        glViewport(0 , 0 , width , height);
     }
 
     @Override

@@ -43,7 +43,7 @@ public class ShaderHelper {
         glCompileShader(shaderObjuectId);
         final int[] compileStatus = new int[1];
         glGetShaderiv(shaderObjuectId , GL_COMPILE_STATUS , compileStatus , 0);
-        Log.e("xhc" , " compile result : "+shaderCode +" "+glGetShaderInfoLog(shaderObjuectId));
+        Log.e("xhc" , "\n\n compile result : "+shaderCode +" "+glGetShaderInfoLog(shaderObjuectId));
         if(compileStatus[0] == 0){
             glDeleteShader(shaderObjuectId);
             Log.e("xhc" , " compile of shader faild ");
@@ -63,7 +63,7 @@ public class ShaderHelper {
         glLinkProgram(programObjectId);
         final int[] linkStatus = new int[1];
         glGetProgramiv(programObjectId , GL_LINK_STATUS , linkStatus , 0);
-        Log.e("xhc" , " result link progrom : \n"+glGetProgramInfoLog(programObjectId));
+        Log.e("xhc" , "\n\n result link progrom : \n"+glGetProgramInfoLog(programObjectId));
         if(linkStatus[0] == 0){
             glDeleteProgram(programObjectId);
             Log.e("xhc" , " program link faild !");
@@ -82,7 +82,7 @@ public class ShaderHelper {
         glValidateProgram(programObjectId);
         final int[] validateStatus = new int[1];
         glGetProgramiv(programObjectId , GL_VALIDATE_STATUS , validateStatus , 0);
-        Log.e("xhc" , " validateing programe : \n"+validateStatus[0]+" log : "+glGetProgramInfoLog(programObjectId));
+        Log.e("xhc" , "\n\n validateing programe : \n"+validateStatus[0]+" log : "+glGetProgramInfoLog(programObjectId));
 
         return validateStatus[0] != 0;
     }
