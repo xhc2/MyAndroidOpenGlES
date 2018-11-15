@@ -1,6 +1,7 @@
 package opengles.xhc.android.myandroidopengles.javaopengl;
 
 import android.content.Context;
+import android.opengl.GLES20;
 import android.opengl.GLSurfaceView;
 import android.util.Log;
 
@@ -17,28 +18,21 @@ import javax.microedition.khronos.opengles.GL10;
 import opengles.xhc.android.myandroidopengles.R;
 
 import static android.opengl.GLES20.GL_COLOR_BUFFER_BIT;
-import static android.opengl.GLES20.GL_FLOAT;
-import static android.opengl.GLES20.GL_LUMINANCE;
-import static android.opengl.GLES20.GL_TEXTURE0;
-import static android.opengl.GLES20.GL_TEXTURE_2D;
-import static android.opengl.GLES20.GL_UNSIGNED_BYTE;
-import static android.opengl.GLES20.glActiveTexture;
-import static android.opengl.GLES20.glBindTexture;
 import static android.opengl.GLES20.glClear;
 import static android.opengl.GLES20.glClearColor;
-import static android.opengl.GLES20.glEnableVertexAttribArray;
 import static android.opengl.GLES20.glGetAttribLocation;
 import static android.opengl.GLES20.glGetUniformLocation;
-import static android.opengl.GLES20.glTexSubImage2D;
+import static android.opengl.GLES20.glUniform1i;
 import static android.opengl.GLES20.glUseProgram;
-import static android.opengl.GLES20.glVertexAttribPointer;
 import static android.opengl.GLES20.*;
 import static android.opengl.GLES30.GL_RED;
 
-public class YuvPlayerRender implements GLSurfaceView.Renderer {
+public class Yuv2Player implements GLSurfaceView.Renderer {
 
     private Context context;
     private final FloatBuffer vertexData;
+    private final FloatBuffer texData;
+    //    private final FloatBuffer texData;
     private static final int BYTES_PER_FLOAT = 4;
     private int program;
     private int aPositionL;
@@ -64,28 +58,40 @@ public class YuvPlayerRender implements GLSurfaceView.Renderer {
     private ByteBuffer bufferU;
     private ByteBuffer bufferV;
 
-    public YuvPlayerRender(Context context) {
+    public Yuv2Player(Context context) {
         this.context = context;
         int yLen = width * height;
         int yuvSize = yLen * 3 / 2;
-        float[] tableVerticesTexture = {
-                //x, y , s , t
-                0f, 0f, 0.5f, 0.5f,
-                1f, 1f, 0f, 1f,
-                -1f, 1f, 1f, 1f,
-                -1f, -1f, 1f, 0f,
-                1f, -1f, 0f, 0f,
-                1f, 1f, 0f, 1f,
+        float vertexVertices[] = {
+                1.0f, 1.0f,
+                -1.0f, 1.0f,
+                1.0f,  -1.0f,
+                -1.0f,  -1.0f,
         };
-
-        vertexData = ByteBuffer.allocateDirect(tableVerticesTexture.length * BYTES_PER_FLOAT)
+        float textureVertices[] = {
+                0.0f,  1.0f,
+                1.0f,  1.0f,
+                0.0f,  0.0f,
+                1.0f,  0.0f,
+        };
+        vertexData = ByteBuffer.allocateDirect(vertexVertices.length * BYTES_PER_FLOAT)
                 .order(ByteOrder.nativeOrder())
                 .asFloatBuffer();
-        vertexData.put(tableVerticesTexture);
+        vertexData.put(vertexVertices);
+        vertexData.position(0);
 
-//        bufferY = ByteBuffer.allocateDirect(yLen).order(ByteOrder.nativeOrder());
-//        bufferU = ByteBuffer.allocateDirect(yLen / 4).order(ByteOrder.nativeOrder());
-//        bufferV = ByteBuffer.allocateDirect(yLen / 4).order(ByteOrder.nativeOrder());
+        texData = ByteBuffer.allocateDirect(textureVertices.length * BYTES_PER_FLOAT)
+                .order(ByteOrder.nativeOrder())
+                .asFloatBuffer();
+        texData.put(textureVertices);
+        texData.position(0);
+
+        bufferY = ByteBuffer.allocateDirect(yLen);
+        bufferU = ByteBuffer.allocateDirect(yLen / 4);
+        bufferV = ByteBuffer.allocateDirect(yLen / 4);
+        bufferV.position(0);
+        bufferU.position(0);
+        bufferY.position(0);
 
         Log.e("xhc", " yuvSize " + yuvSize + " yLen " + yLen);
         try {
@@ -98,28 +104,36 @@ public class YuvPlayerRender implements GLSurfaceView.Renderer {
             System.arraycopy(buffer, 0, byteY, 0, yLen);
             System.arraycopy(buffer, yLen, byteU, 0, yLen / 4);
             System.arraycopy(buffer, yLen * 5 / 4, byteV, 0, yLen / 4);
-            bufferY.wrap(byteY);
-            bufferU.wrap(byteU);
-            bufferV.wrap(byteV);
+            bufferY = ByteBuffer.wrap(byteY);
+            bufferU = ByteBuffer.wrap(byteU);
+            bufferV = ByteBuffer.wrap(byteV);
+//            bufferY.put(byteY);
+//            bufferU.put(byteU);
+//            bufferV.put(byteV);
         } catch (Exception e) {
             Log.e("xhc", " message " + e.getMessage());
             e.printStackTrace();
         }
 
-//        FileOutputStream fos = null;
 //        try {
-//            fos = new FileOutputStream("sdcard/FFmpeg/testonFrame.yuv");
-//            fos.write(byteY);
-//            fos.write(byteU);
-//            fos.write(byteV);
-//            fos.flush();
-//            fos.close();
+//            FileOutputStream fosY = new FileOutputStream("sdcard/FFmpeg/testframe.yuv");
+//            fosY.write(byteY);
+//            fosY.write(byteU);
+//            fosY.write(byteV);
+//            fosY.close();
+//
+////            FileOutputStream fosU = new FileOutputStream("sdcard/FFmpeg/frame.u");
+////            fosU.write(byteU);
+////            fosU.close();
+////
+////            FileOutputStream fosV = new FileOutputStream("sdcard/FFmpeg/frame.v");
+////            fosV.write(byteV);
+////            fosV.close();
 //        } catch (Exception e) {
-//            Log.e("xhc" , " message "+e.getMessage());
 //            e.printStackTrace();
 //        }
-    }
 
+    }
 
     @Override
     public void onSurfaceCreated(GL10 gl10, EGLConfig eglConfig) {
@@ -139,10 +153,6 @@ public class YuvPlayerRender implements GLSurfaceView.Renderer {
         aTextureCoordinatesL = glGetAttribLocation(program, "aTexCoord");
         vertexData.position(0);
 
-        glUniform1i(textureYL, 0);
-        glUniform1i(textureUL, 1);
-        glUniform1i(textureVL, 2);
-
         int[] textures = TextureHelper.initYuvTexture(width, height);
         if (textures == null) {
             return;
@@ -151,62 +161,40 @@ public class YuvPlayerRender implements GLSurfaceView.Renderer {
         textureUid = textures[1];
         textureVid = textures[2];
 
-        setVertexAttribPointer(
-                0,
-                aPositionL,
-                POSITION_COMPONENT_COUNT,
-                STRIDE);
+        glVertexAttribPointer(aPositionL, 2, GL_FLOAT,false , 0, vertexData);
+        glEnableVertexAttribArray(aPositionL);
 
-        setVertexAttribPointer(
-                POSITION_COMPONENT_COUNT,
-                aTextureCoordinatesL,
-                TEXTURE_COORDINATES_COMPONNET_COUNT,
-                STRIDE);
+        glVertexAttribPointer(aTextureCoordinatesL, 2, GL_FLOAT, false, 0, texData);
+        glEnableVertexAttribArray(aTextureCoordinatesL);
 
-
-
-    }
-
-    private void setVertexAttribPointer(int dataOffset, int attributeLocation, int componetCount, int stride) {
-        vertexData.position(dataOffset);
-        glEnableVertexAttribArray(attributeLocation);
-        glVertexAttribPointer(attributeLocation, componetCount, GL_FLOAT, false, stride, vertexData);
-        vertexData.position(0);
     }
 
     @Override
     public void onSurfaceChanged(GL10 gl10, int width, int height) {
-        glViewport(0, 0, width, height);
+        glViewport(0 , 0 , width , height);
     }
 
     @Override
     public void onDrawFrame(GL10 gl10) {
         glClear(GL_COLOR_BUFFER_BIT);
+        GLES20.glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
         glUseProgram(program);
-
 
         glActiveTexture(GL_TEXTURE0);
         glBindTexture(GL_TEXTURE_2D, textureYid);
-        glTexSubImage2D(GL_TEXTURE_2D, 0, 0, 0, width, height, GL_LUMINANCE,
-                GL_UNSIGNED_BYTE,
-                bufferY);
-
+        glTexImage2D(GL_TEXTURE_2D, 0, GL_LUMINANCE, width, height, 0, GL_LUMINANCE, GL_UNSIGNED_BYTE, bufferY);
+        glUniform1i(textureYL, 0);
 
         glActiveTexture(GL_TEXTURE1);
         glBindTexture(GL_TEXTURE_2D, textureUid);
-        glTexSubImage2D(GL_TEXTURE_2D, 0, 0, 0, width / 2, height / 2, GL_LUMINANCE,
-                GL_UNSIGNED_BYTE,
-                bufferU);
-
+        glTexImage2D(GL_TEXTURE_2D, 0, GL_LUMINANCE, width/2, height/2, 0, GL_LUMINANCE, GL_UNSIGNED_BYTE, bufferU);
+        glUniform1i(textureUL, 1);
 
         glActiveTexture(GL_TEXTURE2);
         glBindTexture(GL_TEXTURE_2D, textureVid);
-        glTexSubImage2D(GL_TEXTURE_2D, 0, 0, 0, width / 2, height / 2, GL_LUMINANCE,
-                GL_UNSIGNED_BYTE,
-                bufferV);
+        glTexImage2D(GL_TEXTURE_2D, 0, GL_LUMINANCE, width/2, height/2, 0, GL_LUMINANCE, GL_UNSIGNED_BYTE, bufferV);
+        glUniform1i(textureVL, 2);
 
-
-        glDrawArrays(GL_TRIANGLE_FAN, 0, 6);
-//        glDrawArrays(GL_TRIANGLE_FAN, 0, 4);
+        glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
     }
 }
