@@ -86,12 +86,6 @@ public class Yuv2Player implements GLSurfaceView.Renderer {
         texData.put(textureVertices);
         texData.position(0);
 
-        bufferY = ByteBuffer.allocateDirect(yLen);
-        bufferU = ByteBuffer.allocateDirect(yLen / 4);
-        bufferV = ByteBuffer.allocateDirect(yLen / 4);
-        bufferV.position(0);
-        bufferU.position(0);
-        bufferY.position(0);
 
         Log.e("xhc", " yuvSize " + yuvSize + " yLen " + yLen);
         try {
@@ -115,23 +109,6 @@ public class Yuv2Player implements GLSurfaceView.Renderer {
             e.printStackTrace();
         }
 
-//        try {
-//            FileOutputStream fosY = new FileOutputStream("sdcard/FFmpeg/testframe.yuv");
-//            fosY.write(byteY);
-//            fosY.write(byteU);
-//            fosY.write(byteV);
-//            fosY.close();
-//
-////            FileOutputStream fosU = new FileOutputStream("sdcard/FFmpeg/frame.u");
-////            fosU.write(byteU);
-////            fosU.close();
-////
-////            FileOutputStream fosV = new FileOutputStream("sdcard/FFmpeg/frame.v");
-////            fosV.write(byteV);
-////            fosV.close();
-//        } catch (Exception e) {
-//            e.printStackTrace();
-//        }
 
     }
 
@@ -166,7 +143,6 @@ public class Yuv2Player implements GLSurfaceView.Renderer {
 
         glVertexAttribPointer(aTextureCoordinatesL, 2, GL_FLOAT, false, 0, texData);
         glEnableVertexAttribArray(aTextureCoordinatesL);
-
     }
 
     @Override
