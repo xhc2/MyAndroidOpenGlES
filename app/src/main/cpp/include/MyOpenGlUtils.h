@@ -11,5 +11,8 @@
 GLuint compileShader(GLenum shaderType , const char *shaderCode);
 
 GLuint createProgram(GLuint vsShader , GLuint fsShader);
+void checkGlError(const char *op);
 
+GLuint* initTextTure();
+//GLuint validateProgram(GLuint program);
 #endif //MYANDROIDOPENGLES_MYOPENGLUTILS_H

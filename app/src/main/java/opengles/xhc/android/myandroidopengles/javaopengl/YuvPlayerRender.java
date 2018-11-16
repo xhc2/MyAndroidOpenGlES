@@ -143,7 +143,7 @@ public class YuvPlayerRender implements GLSurfaceView.Renderer {
         glUniform1i(textureUL, 1);
         glUniform1i(textureVL, 2);
 
-        int[] textures = TextureHelper.initYuvTexture(width, height);
+        int[] textures = TextureHelper.initYuvTexture( );
         if (textures == null) {
             return;
         }

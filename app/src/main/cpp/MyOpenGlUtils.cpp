@@ -58,7 +58,23 @@ GLuint createProgram(GLuint vsShader , GLuint fsShader){
     return program;
 }
 
+GLuint* initTextTure(){
+    GLuint *textures = (GLuint *)malloc(3 * sizeof(int));
+    glGenTextures(3 ,textures); //3是创建三个纹理对象的意思
 
+    if(textures[0] == 0 || textures[1] == 0 || textures[2] == 0){
+        LOGE( "cant open opengl texture object ！");
+        return NULL;
+    }
+    for(int i = 0 ;i < 3 ; ++ i){
+        glBindTexture(GL_TEXTURE_2D , textures[i]);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+    }
+    return textures;
+}
 
 
 

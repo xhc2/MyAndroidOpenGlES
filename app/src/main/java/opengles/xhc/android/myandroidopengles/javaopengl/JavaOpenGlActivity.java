@@ -26,8 +26,10 @@ public class JavaOpenGlActivity extends AppCompatActivity {
         requestWindowFeature(Window.FEATURE_NO_TITLE);
         getWindow().setFlags(WindowManager.LayoutParams. FLAG_FULLSCREEN ,
                 WindowManager.LayoutParams. FLAG_FULLSCREEN);
-        glSurfaceView = new GLSurfaceView(this);
-        setContentView(/*R.layout.activity_java_open_gl*/glSurfaceView);
+
+        setContentView(R.layout.activity_main);
+//        glSurfaceView = new GLSurfaceView(this);
+        glSurfaceView = findViewById(R.id.surfaceview);
         ActivityManager am = (ActivityManager)getSystemService(Context.ACTIVITY_SERVICE);
         ConfigurationInfo cgi = am.getDeviceConfigurationInfo();
 

@@ -8,8 +8,9 @@ add_library( native-lib
              # Provides a relative path to your source file(s).
              src/main/cpp/native-lib.cpp
              src/main/cpp/myopengl.cpp
-               src/main/cpp/MyOpenGlUtils.cpp
-               src/main/cpp/Matrix.cpp
+             src/main/cpp/MyOpenGlUtils.cpp
+             src/main/cpp/Matrix.cpp
+             src/main/cpp/opengl_table.cpp
              )
 
 
@@ -21,6 +22,8 @@ find_library(
 target_link_libraries(
                        native-lib
                        GLESv2
+                        OpenSLES
+                        EGL
                        android
                        log
                        ${log-lib} )

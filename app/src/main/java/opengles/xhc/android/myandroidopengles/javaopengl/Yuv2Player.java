@@ -130,7 +130,7 @@ public class Yuv2Player implements GLSurfaceView.Renderer {
         aTextureCoordinatesL = glGetAttribLocation(program, "aTexCoord");
         vertexData.position(0);
 
-        int[] textures = TextureHelper.initYuvTexture(width, height);
+        int[] textures = TextureHelper.initYuvTexture();
         if (textures == null) {
             return;
         }

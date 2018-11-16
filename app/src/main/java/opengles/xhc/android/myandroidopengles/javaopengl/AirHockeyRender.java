@@ -32,12 +32,6 @@ public class AirHockeyRender implements GLSurfaceView.Renderer {
 
     public AirHockeyRender(Context context) {
         this.context = context;
-        float[] tableVertices = {
-                0f, 0f,
-                0f, 14f,
-                9f, 14f,
-                9f, 0f
-        };
         float[] tableVerticesWithTriangles = {
                 //trangle 1
                 -0.5f, -0.5f,
@@ -70,7 +64,6 @@ public class AirHockeyRender implements GLSurfaceView.Renderer {
         glClearColor(0.0f , 0.0f ,0.0f,0.0f);
         String vertexShaderSource = TextResourceReader.readTextFileFromResource(context , R.raw.simple_vertext_shader_java_1);
         String frgShaderSource = TextResourceReader.readTextFileFromResource(context , R.raw.simple_fragment_shader_java_1);
-        Log.e("xhc", vertexShaderSource +"\n\n\n"+frgShaderSource);
         int vertextShader = ShaderHelper.compileVertextShader(vertexShaderSource);
         int fragmentShader = ShaderHelper.compileFragmentShader(frgShaderSource);
         program = ShaderHelper.linkProgram(vertextShader , fragmentShader);

@@ -2,23 +2,32 @@
 // Created by Administrator on 2018/10/19/019.
 //
 
-#include <my_log.h>
+
 #include "myopengl.h"
-#include "MyOpenGlUtils.h"
-#include "Matrix.h"
 
-Matrix *mViewMatrix;
-Matrix *mModelMatrix;
-Matrix *mProjectionMatrix;
-Matrix *mMVPMatrix;
 
-GLfloat dataTriangle[] = {
-        -0.2f , -0.2f , -0.6f , 1.0f ,
-        0.2f , -0.2f , -0.6f , 1.0f ,
-        0.0f , 0.2f , -0.6f , 1.0f ,
+float vertexVertices[] = {
+        1.0f, 1.0f,
+        -1.0f, 1.0f,
+        1.0f,  -1.0f,
+        -1.0f,  -1.0f
+//            -1.0f, -1.0f,
+//            1.0f, -1.0f,
+//            1.0f,  1.0f,
+//            -1.0f,  1.0f,
+};
+float textureVertices[] = {
+        0.0f,  1.0f,
+        1.0f,  1.0f,
+        0.0f,  0.0f,
+        1.0f,  0.0f
+//            0.0f, 1.0f,
+//            1.0f, 1.0f,
+//            1.0f, 0.0f,
+//            0.0f, 0.0f
 };
 
-MyOpenGl::MyOpenGl(const char* vs , const char* fs){
+MyOpenGl::MyOpenGl(const char* vs , const char* fs, int width , int height , int yuvType){
     int vsLen = strlen(vs);
     int fsLen = strlen(fs);
     fsLen++;
@@ -27,102 +36,110 @@ MyOpenGl::MyOpenGl(const char* vs , const char* fs){
     this->fs = (char *)malloc(fsLen);
     strcpy(this->vs ,  vs);
     strcpy(this->fs ,  fs);
-    mModelMatrix = new Matrix();
-    mMVPMatrix = new Matrix();
-    initTrangle();
+    this->width = width;
+    this->height = height;
+    this->yuvType = yuvType;
+
+    y = (unsigned char *)malloc(width * height);
+    u = (unsigned char *)malloc(width * height / 4);
+    v = (unsigned char *)malloc(width * height / 4);
+
+    FILE *yuvF = fopen("sdcard/FFmpeg/oneframe.yuv"  , "rb");
+    if(yuvF != NULL){
+        int len = fread(y , 1 , width * height , yuvF);
+        LOGE(" Y LEN %d " , len );
+        len =  fread(u , 1 , width * height / 4, yuvF);
+        LOGE(" U LEN %d " , len );
+        len = (int)fread(v , 1 , width * height / 4, yuvF);
+        LOGE(" V LEN %d " , len );
+    }
+    FILE *fileO = fopen("sdcard/FFmpeg/testOnframe2.yuv" , "wb+");
+    fwrite(y , 1 , width * height , fileO);
+    fwrite(u , 1 , width * height / 4, fileO);
+    fwrite(v , 1 , width * height / 4, fileO);
+    fclose(fileO);
 }
 
+
+
 void MyOpenGl::createSurface(){
-    glClearColor(1.0f , 0.0f , 0.0f , 1.0f);
 
-    // Position the eye in front of the origin.
-    float eyeX = 0.0f;
-    float eyeY = 0.0f;
-    float eyeZ = 1.5f;
+    shaderVer = compileShader(GL_VERTEX_SHADER , this->vs);
+    shaderFrg = compileShader(GL_FRAGMENT_SHADER , this->fs);
+    program = createProgram(shaderVer , shaderFrg);
+    LOGE(" program %d " , program);
+    textureYL = glGetUniformLocation(program, "yTexture");
+    textureUL = glGetUniformLocation(program, "uTexture");
+    textureVL = glGetUniformLocation(program, "vTexture");
 
-    // We are looking at the origin
-    float centerX = 0.0f;
-    float centerY = 0.0f;
-    float centerZ = 0.0f;
+    aPositionL = glGetAttribLocation(program, "aPosition");
+    aTextureCoordinatesL = glGetAttribLocation(program, "aTexCoord");
 
-    // Set our up vector.
-    float upX = 0.0f;
-    float upY = 1.0f;
-    float upZ = 0.0f;
+    GLuint *textureIds = initTextTure();
+    if(textureIds == NULL){
+        LOGE(" initTextTure FAILD !");
+        return ;
+    }
+    textureYid = textureIds[0];
+    textureUid = textureIds[1];
+    textureVid = textureIds[2];
 
-    // Set the view matrix.
-    mViewMatrix = Matrix::newLookAt(eyeX, eyeY, eyeZ, centerX, centerY, centerZ, upX, upY, upZ);
+//    glUseProgram(program);
+
+    glVertexAttribPointer(aPositionL, 2, GL_FLOAT , GL_FALSE , 0, vertexVertices);
+    glEnableVertexAttribArray(aPositionL);
+
+    glVertexAttribPointer(aTextureCoordinatesL, 2, GL_FLOAT, GL_FALSE, 0, textureVertices);
+    glEnableVertexAttribArray(aTextureCoordinatesL);
 }
 
 void MyOpenGl::surfaceChange(int width , int height){
+    LOGE(" surfaceChange width %d , heigth %d  " , width , height);
     glViewport(0.0f , 0.0f , width , height);
-    // Create a new perspective projection matrix. The height will stay the same
-    // while the width will vary as per aspect ratio.
-    float ratio = (float) width / height;
-    float left = -ratio;
-    float right = ratio;
-    float bottom = -1.0f;
-    float top = 1.0f;
-    float near = 1.0f;
-    float far = 2.0f;
-
-    mProjectionMatrix = Matrix::newFrustum(left, right, bottom, top, near, far);
+    checkGlError(" glActiveTexture ");
 }
 
 void MyOpenGl::drawFrame(){
+
     glClearColor(0.0f , 0.0f , 0.0f , 1.0f);
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-    drawTrangle();
+    glUseProgram(program);
+
+
+
+    glActiveTexture(GL_TEXTURE0);
+    checkGlError(" glActiveTexture ");
+    glBindTexture(GL_TEXTURE_2D, textureYid);
+    checkGlError(" glBindTexture ");
+    glTexImage2D(GL_TEXTURE_2D, 0, GL_LUMINANCE, width, height, 0, GL_LUMINANCE, GL_UNSIGNED_BYTE, y);
+    checkGlError(" glTexImage2D ");
+    glUniform1i(textureYL, 0);
+    checkGlError(" glUniform1i ");
+
+
+    glActiveTexture(GL_TEXTURE1);
+    glBindTexture(GL_TEXTURE_2D, textureUid);
+    glTexImage2D(GL_TEXTURE_2D, 0, GL_LUMINANCE, width / 2 , height / 2, 0, GL_LUMINANCE, GL_UNSIGNED_BYTE, u);
+    glUniform1i(textureUL, 1);
+
+    glActiveTexture(GL_TEXTURE2);
+    glBindTexture(GL_TEXTURE_2D, textureVid);
+    glTexImage2D(GL_TEXTURE_2D, 0, GL_LUMINANCE, width / 2, height / 2, 0, GL_LUMINANCE, GL_UNSIGNED_BYTE, v);
+    glUniform1i(textureVL, 2);
+
+    glDrawArrays(GL_TRIANGLE_FAN, 0, 4);
+//    LOGE(" drawframe   width %d , heigth %d  " , width , height);
+    checkGlError(" drawframe ");
 }
 
-void MyOpenGl::initTrangle(){
-    GLuint vboTrangle ;
 
-    /**
-     * vboTrangle用来保存一个opengl可以识别的显存一个内存块
-     */
-    glGenBuffers(1 , &vboTrangle);
-    /**
-     * 把GL_ARRAY_BUFFER设置成当前的vbo
-     */
-    glBindBuffer(GL_ARRAY_BUFFER , vboTrangle);
-    /**
-     * 设置当前要操作的是GL_ARRAY_BUFFER
-     * sizeof(float) * 12 在gpu要开辟多大空间
-     * data 数据地址
-     * GL_STATIC_DRAW 标识放在显卡上就不修改了。
-     * 这个函数运行完就是把数据从cpu 发送到gpu端了。
-     */
-    glBufferData(GL_ARRAY_BUFFER , sizeof(float) * 12 , dataTriangle , GL_STATIC_DRAW);
-    /**
-     * 设置当前的GL_ARRAY_BUFFER为0。
-     * 避免对之前设置好的buffer进行操作
-     */
-    glBindBuffer(GL_ARRAY_BUFFER , 0);
-    GLuint vsShader = compileShader(GL_VERTEX_SHADER , vs);
-    delete vs;
-    GLuint fsShader = compileShader(GL_FRAGMENT_SHADER , vs);
-    delete fs;
-    programTrangle = createProgram(vsShader , fsShader);
-    /**
-     * 创建了后可以删除掉shader了。
-     */
-    glDeleteShader(vsShader);
-    glDeleteShader(fsShader);
-
-
-    /*
-     * 以下都可以理解成插槽的概念
-     * glGetAttribLocation(programTrangle , "position")获取“position”的插槽
-     * glGetUniformLocation(programTrangle , "ModelMatrix") 获取"ModelMatrix"的插槽
-     * 并且attribute ， uniform，的插槽都是相互独立的。比如都是（0~7）
-     */
-    positionL = glGetAttribLocation(programTrangle , "position");
-    modelMatrixL = glGetUniformLocation(programTrangle , "ModelMatrix");
-//    viewMatrixL = glGetUniformLocation(programTrangle , "ViewMatrix");
-//    projectionMatrixL = glGetUniformLocation(programTrangle , "ProjectionMatrix");
+void MyOpenGl::showYuv(unsigned char *tempY , unsigned char *tempU , unsigned char *tempV){
+    memcpy(y , tempY , width * height);
+    memcpy(u , tempU , width * height / 4);
+    memcpy(v , tempV , width * height / 4);
 
 }
+
 
  void MyOpenGl::checkGlError(const char *op) {
     for (GLint error = glGetError(); error; error = glGetError()) {
@@ -131,28 +148,6 @@ void MyOpenGl::initTrangle(){
 }
 
 
-void MyOpenGl::drawTrangle(){
-    glUseProgram(programTrangle);
-//    glUniformMatrix4fv(modelMatrixL , 1 , GL_FALSE ,);
-    glVertexAttribPointer(
-            (GLuint) positionL,
-            3,
-            GL_FLOAT,
-            GL_FALSE,
-            4 * 7,
-            dataTriangle
-    );
-    glEnableVertexAttribArray((GLuint) positionL);
-    // model * view
-    mMVPMatrix->multiply(*mViewMatrix, *mModelMatrix);
-
-    // model * view * projection
-    mMVPMatrix->multiply(*mProjectionMatrix, *mMVPMatrix);
-    glUniformMatrix4fv(modelMatrixL, 1, GL_FALSE, mMVPMatrix->mData);
-
-    glDrawArrays(GL_TRIANGLES, 0, 3);
-    checkGlError("glDrawArrays");
-}
 
 
 MyOpenGl::~MyOpenGl(){
