@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    tools:context=".ChoiseYuvActivity">
+
+    <TextView
+        android:id="@+id/title"
+        android:background="#2B4DD5"
+        android:textColor="#ffffff"
+        android:gravity="center"
+        android:textSize="16sp"
+        android:text="请选择文件"
+        android:layout_width="match_parent"
+        android:layout_height="42dp" />
+<TextView
+    android:gravity="center_vertical"
+    android:text="我只会遍历sdcard/FFmpeg 目录"
+    android:background="#808080"
+    android:textColor="#CC3333"
+    android:paddingLeft="10dp"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content" />
+
+    <android.support.v7.widget.RecyclerView
+        android:id="@+id/recyleview"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"/>
+
+</LinearLayout>

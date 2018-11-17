@@ -23,6 +23,7 @@ public class MyGlSurfaceView extends GLSurfaceView implements SurfaceHolder.Call
     @Override
     public void surfaceDestroyed(SurfaceHolder holder) {
         super.surfaceDestroyed(holder);
+        OpenGlNative.renderDestroy();
     }
 
     @Override

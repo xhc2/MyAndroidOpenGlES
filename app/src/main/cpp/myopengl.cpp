@@ -11,31 +11,28 @@ float vertexVertices[] = {
         -1.0f, 1.0f,
         1.0f,  -1.0f,
         -1.0f,  -1.0f
-//            -1.0f, -1.0f,
-//            1.0f, -1.0f,
-//            1.0f,  1.0f,
-//            -1.0f,  1.0f,
 };
 float textureVertices[] = {
         0.0f,  1.0f,
         1.0f,  1.0f,
         0.0f,  0.0f,
         1.0f,  0.0f
-//            0.0f, 1.0f,
-//            1.0f, 1.0f,
-//            1.0f, 0.0f,
-//            0.0f, 0.0f
 };
 
-MyOpenGl::MyOpenGl(const char* vs , const char* fs, int width , int height , int yuvType){
-    int vsLen = strlen(vs);
-    int fsLen = strlen(fs);
+MyOpenGl::MyOpenGl(const char* path , const char* vs , const char* fs, int width , int height , int yuvType){
+    int vsLen = (int)strlen(vs);
+    int fsLen =(int)strlen(fs);
+    int pathLen = (int)strlen(path);
     fsLen++;
     vsLen++;
+    pathLen++;
+
+    this->path = (char *)malloc(pathLen);
     this->vs = (char *)malloc(vsLen);
     this->fs = (char *)malloc(fsLen);
     strcpy(this->vs ,  vs);
     strcpy(this->fs ,  fs);
+    strcpy(this->path ,path);
     this->width = width;
     this->height = height;
     this->yuvType = yuvType;
@@ -43,21 +40,26 @@ MyOpenGl::MyOpenGl(const char* vs , const char* fs, int width , int height , int
     y = (unsigned char *)malloc(width * height);
     u = (unsigned char *)malloc(width * height / 4);
     v = (unsigned char *)malloc(width * height / 4);
-
-    FILE *yuvF = fopen("sdcard/FFmpeg/oneframe.yuv"  , "rb");
-    if(yuvF != NULL){
-        int len = fread(y , 1 , width * height , yuvF);
-        LOGE(" Y LEN %d " , len );
-        len =  fread(u , 1 , width * height / 4, yuvF);
-        LOGE(" U LEN %d " , len );
-        len = (int)fread(v , 1 , width * height / 4, yuvF);
-        LOGE(" V LEN %d " , len );
+    yuvF = fopen(this->path , "rb");
+    if(yuvF == NULL){
+        LOGE(" OEPN FILE FAILD ! ");
+        return ;
     }
-    FILE *fileO = fopen("sdcard/FFmpeg/testOnframe2.yuv" , "wb+");
-    fwrite(y , 1 , width * height , fileO);
-    fwrite(u , 1 , width * height / 4, fileO);
-    fwrite(v , 1 , width * height / 4, fileO);
-    fclose(fileO);
+    this->start();
+}
+
+void MyOpenGl::run(){
+
+    int yLen  = width * height;
+    while(!isExit){
+        threadSleep(0 , 40000000); //40 ms
+        if(fread(y , 1, yLen , yuvF ) != yLen){
+            break;
+        }
+        fread(u , 1, yLen / 4, yuvF );
+        fread(v , 1, yLen / 4, yuvF );
+    }
+    LOGE(" ..... end... ");
 }
 
 
@@ -84,8 +86,6 @@ void MyOpenGl::createSurface(){
     textureUid = textureIds[1];
     textureVid = textureIds[2];
 
-//    glUseProgram(program);
-
     glVertexAttribPointer(aPositionL, 2, GL_FLOAT , GL_FALSE , 0, vertexVertices);
     glEnableVertexAttribArray(aPositionL);
 
@@ -100,7 +100,6 @@ void MyOpenGl::surfaceChange(int width , int height){
 }
 
 void MyOpenGl::drawFrame(){
-
     glClearColor(0.0f , 0.0f , 0.0f , 1.0f);
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
     glUseProgram(program);
@@ -127,9 +126,9 @@ void MyOpenGl::drawFrame(){
     glTexImage2D(GL_TEXTURE_2D, 0, GL_LUMINANCE, width / 2, height / 2, 0, GL_LUMINANCE, GL_UNSIGNED_BYTE, v);
     glUniform1i(textureVL, 2);
 
-    glDrawArrays(GL_TRIANGLE_FAN, 0, 4);
+    glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
 //    LOGE(" drawframe   width %d , heigth %d  " , width , height);
-    checkGlError(" drawframe ");
+
 }
 
 
@@ -151,5 +150,23 @@ void MyOpenGl::showYuv(unsigned char *tempY , unsigned char *tempU , unsigned ch
 
 
 MyOpenGl::~MyOpenGl(){
+    this->stop();
+    this->join();
+    glDisableVertexAttribArray(aPositionL);
+    glDisableVertexAttribArray(aTextureCoordinatesL);
+    glDetachShader(program, shaderVer );
+    glDetachShader(program, shaderFrg);
+    glDeleteShader(shaderVer);
+    glDeleteShader(shaderFrg);
+    glDeleteProgram(program);
+    glDeleteTextures(1, &textureYid);
+    glDeleteTextures(1, &textureUid);
+    glDeleteTextures(1, &textureVid);
+    free(y);
+    free(u);
+    free(v);
+    free(path);
+    free(vs);
+    free(fs);
 
 }

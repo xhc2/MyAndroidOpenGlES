@@ -11,6 +11,7 @@ add_library( native-lib
              src/main/cpp/MyOpenGlUtils.cpp
              src/main/cpp/Matrix.cpp
              src/main/cpp/opengl_table.cpp
+             src/main/cpp/MyThread.cpp
              )
 
 

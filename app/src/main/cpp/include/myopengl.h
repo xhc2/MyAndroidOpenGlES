@@ -7,13 +7,15 @@
 
 
 #include "MyOpenGlUtils.h"
+#include "MyThread.h"
 #include <my_log.h>
 
-class MyOpenGl{
+class MyOpenGl : public MyThread{
 
 private :
     char* vs ;
     char* fs ;
+    char *path ;
     int width ;
     int height;
     int yuvType;
@@ -35,11 +37,11 @@ private :
     unsigned char *u;
     unsigned char *v;
 
-
+    FILE *yuvF;
 
 public :
-
-    MyOpenGl(const char* vs , const char* fs , int width , int height , int yuvType);
+    virtual void run() ;
+    MyOpenGl(const char* path , const char* vs , const char* fs , int width , int height , int yuvType);
     ~MyOpenGl();
     void createSurface();
     void surfaceChange(int width , int height);

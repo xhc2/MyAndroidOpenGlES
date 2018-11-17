@@ -6,7 +6,7 @@
 #include "myopengl.h"
 #include "opengl_table.h"
 
-MyOpenGl *mygl;
+MyOpenGl *mygl = NULL;
 extern "C"
 JNIEXPORT void JNICALL
 Java_opengles_xhc_android_myandroidopengles_OpenGlNative_surfaceCreate(JNIEnv *env, jclass type) {
@@ -30,21 +30,6 @@ Java_opengles_xhc_android_myandroidopengles_OpenGlNative_surfaceChanged(JNIEnv *
      viewChange(width ,height);
 }
 
-
-extern "C"
-JNIEXPORT void JNICALL
-Java_opengles_xhc_android_myandroidopengles_OpenGlNative_initOpenGl(JNIEnv *env, jclass type,
-                                                                    jstring vs_, jstring fs_,
-                                                                    jint width, jint height,
-                                                                    jint yuvType) {
-    const char *vs = env->GetStringUTFChars(vs_, 0);
-    const char *fs = env->GetStringUTFChars(fs_, 0);
-
-    mygl = new MyOpenGl(vs , fs , width , height , yuvType);
-//    init(vs , fs);
-    env->ReleaseStringUTFChars(vs_, vs);
-    env->ReleaseStringUTFChars(fs_, fs);
-}
 extern "C"
 JNIEXPORT void JNICALL
 Java_opengles_xhc_android_myandroidopengles_OpenGlNative_setRender(JNIEnv *env, jclass type,
@@ -59,4 +44,30 @@ Java_opengles_xhc_android_myandroidopengles_OpenGlNative_setRender(JNIEnv *env, 
     env->ReleaseByteArrayElements(y_, y, 0);
     env->ReleaseByteArrayElements(u_, u, 0);
     env->ReleaseByteArrayElements(v_, v, 0);
+}
+
+
+extern "C"
+JNIEXPORT void JNICALL
+Java_opengles_xhc_android_myandroidopengles_OpenGlNative_initOpenGl(JNIEnv *env, jclass type,
+                                                                    jstring path_, jstring vs_,
+                                                                    jstring fs_, jint width,
+                                                                    jint height, jint yuvType) {
+    const char *path = env->GetStringUTFChars(path_, 0);
+    const char *vs = env->GetStringUTFChars(vs_, 0);
+    const char *fs = env->GetStringUTFChars(fs_, 0);
+
+    // TODO
+    mygl = new MyOpenGl(path , vs , fs , width , height , yuvType);
+    env->ReleaseStringUTFChars(path_, path);
+    env->ReleaseStringUTFChars(vs_, vs);
+    env->ReleaseStringUTFChars(fs_, fs);
+}extern "C"
+JNIEXPORT void JNICALL
+Java_opengles_xhc_android_myandroidopengles_OpenGlNative_renderDestroy(JNIEnv *env, jclass type) {
+
+    // TODO
+    if(mygl != NULL){
+        delete mygl;
+    }
 }
