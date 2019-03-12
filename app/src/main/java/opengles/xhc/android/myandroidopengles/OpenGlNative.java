@@ -11,5 +11,7 @@ public class OpenGlNative {
     public static native void drawFrame();
     public static native void setRender(byte[] y , byte[] u , byte[] v);
     public static native void renderDestroy();
+    public static native void initShader();
+
 
 }

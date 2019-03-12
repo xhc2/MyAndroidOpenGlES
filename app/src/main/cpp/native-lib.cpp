@@ -71,3 +71,11 @@ Java_opengles_xhc_android_myandroidopengles_OpenGlNative_renderDestroy(JNIEnv *e
         delete mygl;
     }
 }
+
+extern "C"
+JNIEXPORT void JNICALL
+Java_opengles_xhc_android_myandroidopengles_OpenGlNative_initShader(JNIEnv *env, jclass type) {
+    if(mygl != NULL){
+        mygl->initShader();
+    }
+}

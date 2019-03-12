@@ -6,6 +6,12 @@
     android:layout_height="match_parent"
     android:orientation="vertical">
 
+    <Button
+        android:id="@+id/bt_test"
+        android:text="test"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" />
+
     <opengles.xhc.android.myandroidopengles.MyGlSurfaceView
         android:id="@+id/surfaceview"
         android:layout_width="match_parent"

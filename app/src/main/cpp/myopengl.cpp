@@ -20,6 +20,7 @@ float textureVertices[] = {
 };
 
 MyOpenGl::MyOpenGl(const char* path , const char* vs , const char* fs, int width , int height , int yuvType){
+    initShaderFlag = false;
     int vsLen = (int)strlen(vs);
     int fsLen =(int)strlen(fs);
     int pathLen = (int)strlen(path);
@@ -46,6 +47,7 @@ MyOpenGl::MyOpenGl(const char* path , const char* vs , const char* fs, int width
         return ;
     }
     this->start();
+
 }
 
 void MyOpenGl::run(){
@@ -58,14 +60,13 @@ void MyOpenGl::run(){
         }
         fread(u , 1, yLen / 4, yuvF );
         fread(v , 1, yLen / 4, yuvF );
+
     }
     LOGE(" ..... end... ");
 }
 
 
-
-void MyOpenGl::createSurface(){
-
+void MyOpenGl::initShader(){
     shaderVer = compileShader(GL_VERTEX_SHADER , this->vs);
     shaderFrg = compileShader(GL_FRAGMENT_SHADER , this->fs);
     program = createProgram(shaderVer , shaderFrg);
@@ -91,6 +92,12 @@ void MyOpenGl::createSurface(){
 
     glVertexAttribPointer(aTextureCoordinatesL, 2, GL_FLOAT, GL_FALSE, 0, textureVertices);
     glEnableVertexAttribArray(aTextureCoordinatesL);
+    initShaderFlag = true;
+}
+void MyOpenGl::createSurface(){
+
+    LOGE(" ----------------- surface create -----------------");
+//    initShader();
 }
 
 void MyOpenGl::surfaceChange(int width , int height){
@@ -99,21 +106,16 @@ void MyOpenGl::surfaceChange(int width , int height){
     checkGlError(" glActiveTexture ");
 }
 
-void MyOpenGl::drawFrame(){
+void MyOpenGl::myDraw(){
     glClearColor(0.0f , 0.0f , 0.0f , 1.0f);
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
     glUseProgram(program);
 
-
-
     glActiveTexture(GL_TEXTURE0);
     checkGlError(" glActiveTexture ");
     glBindTexture(GL_TEXTURE_2D, textureYid);
-    checkGlError(" glBindTexture ");
     glTexImage2D(GL_TEXTURE_2D, 0, GL_LUMINANCE, width, height, 0, GL_LUMINANCE, GL_UNSIGNED_BYTE, y);
-    checkGlError(" glTexImage2D ");
     glUniform1i(textureYL, 0);
-    checkGlError(" glUniform1i ");
 
 
     glActiveTexture(GL_TEXTURE1);
@@ -127,16 +129,21 @@ void MyOpenGl::drawFrame(){
     glUniform1i(textureVL, 2);
 
     glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
-//    LOGE(" drawframe   width %d , heigth %d  " , width , height);
+}
+
+void MyOpenGl::drawFrame(){
+    if(initShaderFlag){
+        myDraw();
+    }
 
 }
+
 
 
 void MyOpenGl::showYuv(unsigned char *tempY , unsigned char *tempU , unsigned char *tempV){
     memcpy(y , tempY , width * height);
     memcpy(u , tempU , width * height / 4);
     memcpy(v , tempV , width * height / 4);
-
 }
 
 

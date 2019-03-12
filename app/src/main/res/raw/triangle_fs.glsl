@@ -1,7 +1,4 @@
-#version 120
-#ifdef GL_ES
-precision mediump float ;
-#endif
+precision  mediump float;
 void main() {
-    gl_FragColor=vec4(1.0 , 1.0f , 1.0f , 1.0f);
+    gl_FragColor=vec4(1.0 , 1.0 , 1.0 , 1.0);
 }

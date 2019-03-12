@@ -39,11 +39,15 @@ private :
 
     FILE *yuvF;
 
+    void myDraw();
+
+    bool initShaderFlag ;
 public :
     virtual void run() ;
     MyOpenGl(const char* path , const char* vs , const char* fs , int width , int height , int yuvType);
     ~MyOpenGl();
     void createSurface();
+    void initShader();
     void surfaceChange(int width , int height);
     void drawFrame();
     void showYuv(unsigned char *tempY , unsigned char *tempU , unsigned char *tempV );

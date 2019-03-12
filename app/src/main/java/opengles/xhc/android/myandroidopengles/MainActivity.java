@@ -6,6 +6,7 @@ import android.opengl.GLSurfaceView;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.View;
 import android.view.WindowManager;
 import android.widget.TextView;
 
@@ -15,8 +16,6 @@ import javax.microedition.khronos.egl.EGLConfig;
 import javax.microedition.khronos.opengles.GL10;
 
 public class MainActivity extends AppCompatActivity {
-
-
 
     private MyGlSurfaceView surfaceView ;
     @Override
@@ -35,6 +34,13 @@ public class MainActivity extends AppCompatActivity {
         MyGlRender render = new MyGlRender(this , path , width , height);
         surfaceView.setEGLContextClientVersion(2);
         surfaceView.setRenderer(render);
+//        surfaceView.setRenderMode(GLSurfaceView.RENDERMODE_WHEN_DIRTY);
+        findViewById(R.id.bt_test).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                OpenGlNative.initShader();
+            }
+        });
 
     }
 
