@@ -21,6 +21,7 @@ public class JavaShowTrangleActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_java_show_trangle);
         glSurfaceView = findViewById(R.id.gl_surface_view);
+
         ActivityManager am = (ActivityManager)getSystemService(Context.ACTIVITY_SERVICE);
         ConfigurationInfo cgi = am.getDeviceConfigurationInfo();
         //验证是否支持opengles 2.0

@@ -37,11 +37,12 @@ public class TrangleRender implements GLSurfaceView.Renderer {
     }
     @Override
     public void onSurfaceCreated(GL10 gl10, EGLConfig eglConfig) {
+
         float[] trangle = {
                 //x, y
-                -0.5f, -0.5f,
-                0.5f, 0.5f,
-                -0.5f, 0.5f,
+                -1f, -1f,
+                1f, 1f,
+                -1f, 1f,
         };
 
         trangleData = ByteBuffer.allocateDirect(trangle.length * BYTES_PER_FLOAT)
@@ -55,6 +56,7 @@ public class TrangleRender implements GLSurfaceView.Renderer {
         int fragmentShader = ShaderHelper.compileFragmentShader(frgShaderSource);
         program = ShaderHelper.linkProgram(vertextShader , fragmentShader);
         ShaderHelper.validatePrograme(program);
+
         glUseProgram(program);
         positonLocation = glGetAttribLocation(program , "a_position");
         trangleData.position(0);
@@ -65,7 +67,6 @@ public class TrangleRender implements GLSurfaceView.Renderer {
     @Override
     public void onSurfaceChanged(GL10 gl10, int width, int height) {
         glViewport(0, 0, width, height);
-
     }
 
     @Override
