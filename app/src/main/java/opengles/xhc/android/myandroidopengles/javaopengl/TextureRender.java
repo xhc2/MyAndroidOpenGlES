@@ -56,7 +56,6 @@ public class TextureRender implements GLSurfaceView.Renderer {
         glClearColor(0.0f, 0.0f, 0.0f, 0.0f);
         String vertexShaderSource = TextResourceReader.readTextFileFromResource(context, R.raw.texture_vertext_shader_java_1);
         String frgShaderSource = TextResourceReader.readTextFileFromResource(context, R.raw.texture_frament_shader_java_1);
-
         int vertextShader = ShaderHelper.compileVertextShader(vertexShaderSource);
         int fragmentShader = ShaderHelper.compileFragmentShader(frgShaderSource);
         program = ShaderHelper.linkProgram(vertextShader, fragmentShader);
@@ -66,8 +65,10 @@ public class TextureRender implements GLSurfaceView.Renderer {
         uTextureUnitL = glGetUniformLocation(program, "u_TextureUnit");
         aPositionL = glGetAttribLocation(program, "a_Position");
         aTextureCoordinatesL = glGetAttribLocation(program, "a_TextureCoordinates");
+
         vertexData.position(0);
-        texttureId = TextureHelper.loadTexture(context, R.mipmap.air_hockey_surface);
+        texttureId = TextureHelper.loadTexture(context, R.mipmap.b);
+
         Log.e("xhc", " textture " + texttureId);
         setVertexAttribPointer(0,
                 aPositionL,
@@ -97,14 +98,10 @@ public class TextureRender implements GLSurfaceView.Renderer {
     public void onDrawFrame(GL10 gl10) {
         glClear(GL_COLOR_BUFFER_BIT);
         glUseProgram(program);
-
         //drawtexture
         glActiveTexture(GL_TEXTURE0);
         glBindTexture(GL_TEXTURE_2D, texttureId);
         glUniform1i(uTextureUnitL, 0);
-
-
-
         glDrawArrays(GL_TRIANGLE_FAN, 0, 6);
     }
 }

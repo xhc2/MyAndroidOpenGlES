@@ -101,15 +101,10 @@ public class Yuv2Player implements GLSurfaceView.Renderer {
             bufferY = ByteBuffer.wrap(byteY);
             bufferU = ByteBuffer.wrap(byteU);
             bufferV = ByteBuffer.wrap(byteV);
-//            bufferY.put(byteY);
-//            bufferU.put(byteU);
-//            bufferV.put(byteV);
         } catch (Exception e) {
             Log.e("xhc", " message " + e.getMessage());
             e.printStackTrace();
         }
-
-
     }
 
     @Override
@@ -153,7 +148,6 @@ public class Yuv2Player implements GLSurfaceView.Renderer {
     @Override
     public void onDrawFrame(GL10 gl10) {
         glClear(GL_COLOR_BUFFER_BIT);
-        GLES20.glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
         glUseProgram(program);
 
         glActiveTexture(GL_TEXTURE0);

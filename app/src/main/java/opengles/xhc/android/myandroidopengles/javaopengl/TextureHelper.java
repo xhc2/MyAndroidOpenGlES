@@ -35,6 +35,7 @@ public class TextureHelper {
             glDeleteTextures(1, textureObjectIds , 0);
             return 0;
         }
+
         //绑定纹理
         glBindTexture(GL_TEXTURE_2D , textureObjectIds[0]);
         /**

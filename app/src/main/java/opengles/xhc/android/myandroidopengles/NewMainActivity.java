@@ -19,5 +19,20 @@ public class NewMainActivity extends Activity {
             }
         });
 
+        findViewById(R.id.tv_java_show_rgb).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                startActivity(new Intent(NewMainActivity.this , RgbRenderActivity.class));
+            }
+        });
+
+
+        findViewById(R.id.tv_java_show_yuv).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                startActivity(new Intent(NewMainActivity.this , YuvShowRenderActivity.class));
+            }
+        });
+
     }
 }

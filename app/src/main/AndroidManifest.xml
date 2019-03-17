@@ -33,7 +33,9 @@
             android:name=".MainActivity"
             android:screenOrientation="landscape"
             android:theme="@style/Theme.AppCompat.Light.NoActionBar" />
-        <activity android:name=".JavaShowTrangleActivity"></activity>
+        <activity android:name=".JavaShowTrangleActivity" />
+        <activity android:name=".RgbRenderActivity" />
+        <activity android:name=".YuvShowRenderActivity"></activity>
     </application>
 
 </manifest>

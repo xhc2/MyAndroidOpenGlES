@@ -10,5 +10,15 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content" />
 
+    <Button
+        android:id="@+id/tv_java_show_rgb"
+        android:text="渲染rgb图片"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" />
 
+    <Button
+        android:id="@+id/tv_java_show_yuv"
+        android:text="渲染yuv"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" />
 </LinearLayout>
