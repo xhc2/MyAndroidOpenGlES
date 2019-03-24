@@ -4,14 +4,12 @@
 #include "GLES2/gl2ext.h"
 #include "GLES2/gl2.h"
 #include "myopengl.h"
-#include "opengl_table.h"
 
 MyOpenGl *mygl = NULL;
 extern "C"
 JNIEXPORT void JNICALL
 Java_opengles_xhc_android_myandroidopengles_OpenGlNative_surfaceCreate(JNIEnv *env, jclass type) {
     mygl->createSurface();
-//     surfaceCreate();
 }
 
 extern "C"
@@ -19,7 +17,6 @@ JNIEXPORT void JNICALL
 Java_opengles_xhc_android_myandroidopengles_OpenGlNative_drawFrame(JNIEnv *env, jclass type) {
     mygl->drawFrame();
 
-//     drawFrame();
 }
 
 extern "C"
@@ -27,7 +24,7 @@ JNIEXPORT void JNICALL
 Java_opengles_xhc_android_myandroidopengles_OpenGlNative_surfaceChanged(JNIEnv *env, jclass type,
                                                                         jint width, jint height) {
     mygl->surfaceChange(width, height);
-     viewChange(width ,height);
+//     viewChange(width ,height);
 }
 
 extern "C"
@@ -62,7 +59,10 @@ Java_opengles_xhc_android_myandroidopengles_OpenGlNative_initOpenGl(JNIEnv *env,
     env->ReleaseStringUTFChars(path_, path);
     env->ReleaseStringUTFChars(vs_, vs);
     env->ReleaseStringUTFChars(fs_, fs);
-}extern "C"
+}
+
+
+extern "C"
 JNIEXPORT void JNICALL
 Java_opengles_xhc_android_myandroidopengles_OpenGlNative_renderDestroy(JNIEnv *env, jclass type) {
 

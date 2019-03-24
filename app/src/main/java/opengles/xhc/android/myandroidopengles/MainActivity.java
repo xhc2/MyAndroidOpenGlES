@@ -30,6 +30,8 @@ public class MainActivity extends AppCompatActivity {
         String path = intent.getStringExtra("path");
         int width = intent.getIntExtra("w" , -1);
         int height = intent.getIntExtra("h" , -1);
+        Log.e("xhc" , " width "+width+" height "+height);
+
 
         MyGlRender render = new MyGlRender(this , path , width , height);
         surfaceView.setEGLContextClientVersion(2);

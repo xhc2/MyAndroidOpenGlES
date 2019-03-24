@@ -46,7 +46,7 @@ MyOpenGl::MyOpenGl(const char* path , const char* vs , const char* fs, int width
         LOGE(" OEPN FILE FAILD ! ");
         return ;
     }
-    this->start();
+
 
 }
 
@@ -67,6 +67,7 @@ void MyOpenGl::run(){
 
 
 void MyOpenGl::initShader(){
+    LOGE(" %s  \n\n\n %s",vs ,fs);
     shaderVer = compileShader(GL_VERTEX_SHADER , this->vs);
     shaderFrg = compileShader(GL_FRAGMENT_SHADER , this->fs);
     program = createProgram(shaderVer , shaderFrg);
@@ -93,11 +94,12 @@ void MyOpenGl::initShader(){
     glVertexAttribPointer(aTextureCoordinatesL, 2, GL_FLOAT, GL_FALSE, 0, textureVertices);
     glEnableVertexAttribArray(aTextureCoordinatesL);
     initShaderFlag = true;
+        this->start();
 }
 void MyOpenGl::createSurface(){
 
     LOGE(" ----------------- surface create -----------------");
-//    initShader();
+    initShader();
 }
 
 void MyOpenGl::surfaceChange(int width , int height){
